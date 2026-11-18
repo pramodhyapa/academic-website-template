@@ -15,7 +15,7 @@ install. The examples belong to **Bodhi B. Björn**, a fictional researcher.
 
 Download the release ZIP above, extract it, then double-click `index.html` in
 the extracted folder. A built copy is included, so viewing it needs no Python
-and no server. The ZIP also contains the editable source.
+and no server. The ZIP also contains only the source and instructions needed to edit and rebuild it.
 
 ## Start from GitHub source
 
@@ -27,12 +27,11 @@ Install Python 3.10 or newer, then run these commands from the project folder:
 
 ```sh
 python build.py
-python preview.py
+python -m http.server 8767 --bind 127.0.0.1 --directory dist
 ```
 
 On systems that name Python 3 `python3`, use that command instead. Open
-<http://127.0.0.1:8767> and press Ctrl+C to stop. An optional port is supported:
-`python preview.py --port 8770`. After editing, run `python build.py` and refresh
+<http://127.0.0.1:8767> and press Ctrl+C to stop. To use a different port, replace `8767` in the server command. After editing, run `python build.py` and refresh
 the browser. You can also open `dist/index.html` directly after building.
 
 Only the generated `dist/` directory needs to go on a web host. It contains
@@ -103,6 +102,8 @@ permanent “View all” link. Categories come from the entries. Search appears
 automatically at six entries. With JavaScript disabled all entries remain
 visible and navigation still works.
 
+The build copies only referenced images, styles, scripts and downloads. The
+network SVG is embedded in the HTML, so no unused copy is shipped as an asset.
 The build checks duplicate slugs, dates, local links, images, downloads and HTML
 anchors. It does not check external websites. Content files are trusted local
 authoring inputs; this is not a CMS for untrusted submissions.
@@ -167,10 +168,16 @@ ready-to-open archive. Build checks also run on Linux and Windows with Python
 3.10 and 3.14 in GitHub Actions. They do not contact external links.
 
 `tools/make_release.py` rebuilds the website and creates
-`release/academic-website-template.zip`. It packages the editable source and a
-built `dist/`, with an opening page for offline use. It includes only the
-documented source directories and release files, not Git history, caches,
-credentials or unrelated files. The release directory is ignored by Git.
+`release/academic-website-template.zip`. It includes the editable source, the
+built `dist/`, a short README, the licence and an offline opening page. Only
+referenced source files and generated output are packaged. Repository workflows,
+tests, the artwork generator, screenshots, Git metadata and caches are omitted.
+The release directory is ignored by Git.
+
+The repository keeps the optional tests/workflows for maintenance and the
+README screenshot for browsing GitHub. They are not part of the website or the
+starter download. The source artwork generator is retained so its provenance
+and construction remain inspectable.
 
 To publish a new version, run the **Publish release** workflow with an unused
 semantic version tag such as `v1.0.1`. It runs the checks, packages the website,
@@ -189,7 +196,11 @@ included **Future Imperfect by HTML5 UP / AJ**, **Sciento by Aspirity**, and
 **Mundana by Sal / WowThemes.net**. Those authors retain credit for their work.
 This starter uses a newly authored implementation and original placeholder
 artwork; their theme source, stock assets and fonts are not bundled or relicensed.
-See **[CREDITS.md](CREDITS.md)** for the evidence and exclusions.
+The archive review identified these separate lineages; this licence does not
+grant rights to those historical themes. Their original pages are
+[Future Imperfect](https://html5up.net/future-imperfect),
+[Sciento](https://themeforest.net/item/sciento-html-personal-page-for-scientists/19501135),
+and [Mundana](https://github.com/codebygina/template-mundana-bootstrap-html).
 
 OpenAI's Codex was used to help develop the implementation, examples, artwork
 and documentation. There are no API keys, accounts or AI services required to

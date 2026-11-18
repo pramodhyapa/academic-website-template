@@ -65,11 +65,16 @@ with tempfile.TemporaryDirectory(prefix='academic-template-release-check-') as f
     with zipfile.ZipFile(output) as archive:
         assert archive.testzip() is None
         names = set(archive.namelist())
-        for required in ('index.html', 'dist/index.html', 'LICENSE', 'CREDITS.md',
+        for required in ('index.html', 'dist/index.html', 'LICENSE',
                          'README.md', 'content/site.json', 'src/page.html', 'build.py'):
             assert 'academic-website-template/' + required in names, required
         assert 'url=dist/index.html' in archive.read('academic-website-template/index.html').decode('utf-8')
-        assert not any('/.git/' in n or '/__pycache__/' in n or '/.env' in n for n in names)
+        assert not any('/' + segment + '/' in n for n in names
+                       for segment in ('.git', '__pycache__', '.github', 'docs', 'tools'))
+        assert not any('/.env' in n or n.endswith(('CREDITS.md', 'LICENSE-STATUS.md')) for n in names)
+        assert 'academic-website-template/dist/assets/network.svg' not in names
+        assert 'academic-website-template/src/assets/network.svg' in names
+        assert 'MIT' in archive.read('academic-website-template/README.md').decode('utf-8')
         config = json.loads(archive.read('academic-website-template/content/site.json'))
         assert config['name'] == json.loads((ROOT / 'content/site.json').read_text(encoding='utf-8'))['name']
 print(f'Passed: {len(checked)} project-subdirectory URLs, release licence/screenshot and editable offline ZIP.')

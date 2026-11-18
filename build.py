@@ -62,14 +62,6 @@ def build():
     generated_pages = []
     asset_manifest = OUT / '.generated-assets.json'
     previous_assets = json.loads(asset_manifest.read_text(encoding='utf-8')) if asset_manifest.exists() else []
-    generated_assets = [file.relative_to(SRC).as_posix() for folder in ('assets', 'downloads') for file in (SRC / folder).rglob('*') if file.is_file()]
-    for relative in set(previous_assets) - set(generated_assets):
-        stale = (OUT / relative).resolve()
-        if stale.is_relative_to(OUT.resolve()) and stale.is_file():
-            stale.unlink()
-    # Copy only template assets. Never copy anything from a personal website.
-    shutil.copytree(SRC / 'assets', OUT / 'assets', dirs_exist_ok=True)
-    shutil.copytree(SRC / 'downloads', OUT / 'downloads', dirs_exist_ok=True)
     template = Template((SRC / 'page.html').read_text(encoding='utf-8'))
     asset_version = hashlib.sha256((SRC / 'assets/site.css').read_bytes() + (SRC / 'assets/site.js').read_bytes()).hexdigest()[:10]
 
@@ -175,6 +167,7 @@ def build():
 <div class="outreach-grid"><article><h2>Public talks</h2><p>Add a talk title, a short description and a recording or slides when you have them. A few thoughtful examples are enough to start.</p></article><article><h2>Creative projects</h2><p>Use this section for films, workshops, community activities or other ways you share your work. These are placeholder sections to replace with your own projects.</p></article></div></div>'''
     page('outreach.html', 'Talks & outreach', 'Talks, teaching and public engagement.', body, 'outreach')
     page('404.html', 'Page not found', 'This page could not be found.', '<div class="wrap section"><h1>Page not found</h1><p>The page may have moved.</p><a class="button" href="./index.html">Back to home →</a></div>', '')
+    generated_assets = copy_used_assets(generated_pages, previous_assets)
     for relative in set(previous_pages) - set(generated_pages):
         stale = (OUT / relative).resolve()
         if stale.is_relative_to(OUT.resolve()) and stale.suffix == '.html' and stale.is_file():
@@ -199,6 +192,52 @@ class Links(HTMLParser):
         for name in ('href', 'src'):
             if attrs.get(name):
                 self.urls.append(attrs[name])
+
+
+def copy_used_assets(pages, previous):
+    """Copy only local assets referenced by generated pages or their stylesheets."""
+    pending, used = [], set()
+
+    def include(base, value):
+        url = urlsplit(value)
+        if url.scheme or url.netloc or not url.path:
+            return
+        target = (base / unquote(url.path)).resolve()
+        if target.is_relative_to(OUT.resolve()):
+            relative = target.relative_to(OUT.resolve()).as_posix()
+            if relative.startswith(('assets/', 'downloads/')) and relative not in used:
+                pending.append(relative)
+
+    for relative in pages:
+        page = OUT / relative
+        parser = Links()
+        parser.feed(page.read_text(encoding='utf-8'))
+        for value in parser.urls:
+            include(page.parent, value)
+    while pending:
+        relative = pending.pop()
+        if relative in used:
+            continue
+        source = (SRC / relative).resolve()
+        target = OUT / relative
+        if not source.is_relative_to(SRC.resolve()) or source.is_symlink() or not source.is_file():
+            if target.resolve().is_relative_to(OUT.resolve()) and target.is_file():
+                target.unlink()
+            raise ValueError(f'Missing or unsafe source asset: {relative}')
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, target)
+        used.add(relative)
+        if source.suffix == '.css':
+            text = source.read_text(encoding='utf-8')
+            values = re.findall(r'url\(\s*[\"\']?([^\"\')]+)', text)
+            values += re.findall(r'@import\s+[\"\']([^\"\']+)', text)
+            for value in values:
+                include(target.parent, value.strip())
+    for relative in set(previous) - used:
+        stale = (OUT / relative).resolve()
+        if stale.is_relative_to(OUT.resolve()) and stale.is_file():
+            stale.unlink()
+    return sorted(used)
 
 
 def check_links():

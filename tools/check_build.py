@@ -21,6 +21,22 @@ with tempfile.TemporaryDirectory(prefix='academic-template-check-') as folder:
         shutil.copytree(ROOT / name, root / name)
     shutil.copy2(ROOT / 'build.py', root / 'build.py')
     run(root)
+    # Unused assets and authoring files must not enter the generated website.
+    (root / 'src/assets/unused.txt').write_text('unused asset', encoding='utf-8')
+    (root / 'src/downloads/unused.txt').write_text('unused download', encoding='utf-8')
+    (root / 'src/writing/unused.html').write_text('<p>Unlisted draft</p>', encoding='utf-8')
+    run(root)
+    assert not (root / 'dist/assets/unused.txt').exists()
+    assert not (root / 'dist/downloads/unused.txt').exists()
+    assert not (root / 'dist/assets/network.svg').exists()  # Already embedded in HTML.
+    # Referenced stylesheet dependencies are retained, including nested assets.
+    (root / 'src/assets/extra.css').write_text('.extra{background:url("nested/marker.svg")}', encoding='utf-8')
+    (root / 'src/assets/nested').mkdir()
+    (root / 'src/assets/nested/marker.svg').write_text('<svg xmlns="http://www.w3.org/2000/svg"/>', encoding='utf-8')
+    style = root / 'src/assets/site.css'
+    style.write_text('@import "extra.css";\n' + style.read_text(encoding='utf-8'), encoding='utf-8')
+    run(root)
+    assert (root / 'dist/assets/nested/marker.svg').is_file()
     catalog_file = root / 'content/catalog.json'
     original = json.loads(catalog_file.read_text(encoding='utf-8'))
     expanded = original.copy()
@@ -50,4 +66,4 @@ with tempfile.TemporaryDirectory(prefix='academic-template-check-') as folder:
     (root / 'src/downloads/reading-notes.md').unlink()
     run(root, expect_ok=False)
     assert not (output / 'downloads/reading-notes.md').exists()
-print('Passed: build, catalogue growth, latest-menu cap/order, search threshold, entry removal, duplicate rejection and missing-download detection.')
+print('Passed: build, referenced assets, exclusion of unused files, catalogue growth, menu limits, search, removal and invalid-input checks.')
