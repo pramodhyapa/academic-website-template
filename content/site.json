@@ -1,0 +1,16 @@
+{
+  "name": "Bodhi B. Björn",
+  "role": "Researcher in condensed matter physics",
+  "department": "Department of Physics",
+  "institution": "Northbridge University",
+  "location": "Your city, country",
+  "email": "bodhi@example.com",
+  "description": "Research, writing and useful things from Bodhi B. Björn.",
+  "intro": "Hello! I'm Bodhi. I study how simple interactions give rise to surprising behaviour in materials.",
+  "about": "I like problems that connect a clear physical picture with a calculation. Here you can find my research, notes on ideas I'm working through, and a few resources to use in your own work.",
+  "socials": [],
+  "cv_url": "",
+  "network_motion": true,
+  "latest_menu_count": 3,
+  "demo": true
+}

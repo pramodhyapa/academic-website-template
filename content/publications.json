@@ -1,0 +1,22 @@
+[
+  {
+    "title": "Patterns from simple interactions",
+    "authors": "B. B. Björn and J. Lee",
+    "venue": "Example research paper · 2026",
+    "topic": "Collective behaviour",
+    "summary": "A sample publication entry. Replace this with a short explanation of your result and links to the paper.",
+    "abstract": "Use this space for the full abstract. Keeping it behind a disclosure makes the publication list easy to scan while leaving the details close at hand.",
+    "links": [],
+    "image": "assets/research.svg"
+  },
+  {
+    "title": "Following a wave through a lattice",
+    "authors": "B. B. Björn",
+    "venue": "Example research paper · 2025",
+    "topic": "Waves and materials",
+    "summary": "A second example shows how the list grows. This is fictional content, with no invented DOI or journal link.",
+    "abstract": "Add your own abstract here, or remove this field to omit the disclosure.",
+    "links": [],
+    "image": "assets/wave.svg"
+  }
+]

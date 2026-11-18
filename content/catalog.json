@@ -1,0 +1,47 @@
+[
+  {
+    "slug": "watching-a-wave",
+    "collection": "writing",
+    "title": "Watching a wave travel",
+    "label": "Interactive note",
+    "category": "Research notes",
+    "date": "2026-11-16",
+    "summary": "A small interactive example: change the wavelength and watch a disturbance move through a chain.",
+    "image": "assets/wave.svg",
+    "body": "writing/watching-a-wave.html"
+  },
+  {
+    "slug": "starting-a-research-notebook",
+    "collection": "writing",
+    "title": "Starting a research notebook",
+    "label": "Short essay",
+    "category": "Working notes",
+    "date": "2026-11-12",
+    "summary": "An example of an ordinary article, with space for an idea, a figure and a few useful links.",
+    "image": "assets/notebook.svg",
+    "body": "writing/starting-a-research-notebook.html"
+  },
+  {
+    "slug": "reading-notes",
+    "collection": "resources",
+    "title": "Reading notes template",
+    "label": "Markdown template",
+    "category": "Templates",
+    "date": "2026-11-15",
+    "summary": "A small, plain-text starting point for recording what a paper asks, what it finds and what to read next.",
+    "image": "assets/notebook.svg",
+    "body": "resources/reading-notes.html",
+    "download": "downloads/reading-notes.md"
+  },
+  {
+    "slug": "figure-checklist",
+    "collection": "resources",
+    "title": "A simple figure checklist",
+    "label": "Practical guide",
+    "category": "Guides",
+    "date": "2026-11-10",
+    "summary": "A short checklist for figures that stay readable in a paper, on a slide and on a phone.",
+    "image": "assets/research.svg",
+    "body": "resources/figure-checklist.html"
+  }
+]

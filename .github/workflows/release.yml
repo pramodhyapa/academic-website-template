@@ -1,0 +1,37 @@
+name: Publish release
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'New version tag, for example v1.0.1'
+        required: true
+        type: string
+permissions:
+  contents: write
+concurrency:
+  group: release
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONUTF8: '1'
+      RELEASE_VERSION: ${{ inputs.version }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.14'
+      - name: Validate version
+        run: python -c "import os,re; assert re.fullmatch(r'v[0-9]+[.][0-9]+[.][0-9]+',os.environ['RELEASE_VERSION']), 'Use vMAJOR.MINOR.PATCH'"
+      - run: python tools/check_build.py
+      - run: python build.py
+      - run: python tools/check_release.py
+      - run: python tools/make_release.py --version "$RELEASE_VERSION"
+      - name: Publish checked release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: gh release create "$RELEASE_VERSION" release/academic-website-template.zip release/SHA256SUMS --target "$GITHUB_SHA" --title "Academic website template $RELEASE_VERSION" --notes-file release/RELEASE-NOTES.md

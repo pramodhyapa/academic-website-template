@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="$description">
+  <meta name="color-scheme" content="light">
+  <title>$title</title>
+  <link rel="icon" href="$prefix/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="$prefix/assets/site.css?v=$asset_version">
+  <script defer src="$prefix/assets/site.js?v=$asset_version"></script>
+</head>
+<body data-network-motion="$motion">
+  <a class="skip-link" href="#main">Skip to content</a>
+  $network
+  <header class="site-header wrap">
+    <a class="wordmark" href="$prefix/index.html">$name<span>Research &amp; ideas</span></a>
+    <button class="menu-toggle" aria-expanded="false" aria-controls="main-navigation" hidden>Menu <span aria-hidden="true">☰</span></button>
+    <nav id="main-navigation" aria-label="Main navigation">$navigation</nav>
+  </header>
+  <main id="main">$body</main>
+  <footer class="site-footer" id="contact">
+    <div class="wrap contact-grid">
+      <div><span class="eyebrow">Say hello</span><h2>Get in touch</h2><p>For research, conversations and possible collaborations.</p><p class="small">$department<br>$institution · $location</p></div>
+      <div class="contact-links"><a class="email" href="mailto:$email">$display_email</a>$socials</div>
+    </div>
+    <div class="wrap footer-bottom"><span>© $year $name</span>$demo_footer<a href="$prefix/index.html">Back to home ↑</a></div>
+  </footer>
+</body>
+</html>
